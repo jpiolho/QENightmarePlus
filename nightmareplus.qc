@@ -222,7 +222,7 @@ void() NightmarePlus_GenerateEnemies =
             NightmarePlus_CreateEnemy(p,monster_tarbaby);
         else if (p.classname == "monster_wizard")
             NightmarePlus_CreateEnemy(p,monster_wizard);
-        else if (p.classname == "monster_zombie")
+        else if (p.classname == "monster_zombie" && !(p.spawnflags & SPAWN_CRUCIFIED))
             NightmarePlus_CreateEnemy(p,monster_zombie);
 
 
