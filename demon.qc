@@ -184,15 +184,18 @@ void() monster_demon1 =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/demon.mdl");
-	precache_model ("progs/h_demon.mdl");
 
-	precache_sound ("demon/ddeath.wav");
-	precache_sound ("demon/dhit2.wav");
-	precache_sound ("demon/djump.wav");
-	precache_sound ("demon/dpain1.wav");
-	precache_sound ("demon/idle1.wav");
-	precache_sound ("demon/sight2.wav");
+	if(!IsPrecacheDisallowed()) {
+		precache_model ("progs/demon.mdl");
+		precache_model ("progs/h_demon.mdl");
+
+		precache_sound ("demon/ddeath.wav");
+		precache_sound ("demon/dhit2.wav");
+		precache_sound ("demon/djump.wav");
+		precache_sound ("demon/dpain1.wav");
+		precache_sound ("demon/idle1.wav");
+		precache_sound ("demon/sight2.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -200,7 +203,7 @@ void() monster_demon1 =
 	setmodel (self, "progs/demon.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 300;
+	self.health = 300 * monsters_health_modifier;
 
 	self.th_stand = demon1_stand1;
 	self.th_walk = demon1_walk1;

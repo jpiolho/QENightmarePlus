@@ -334,14 +334,17 @@ void() monster_dog =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/h_dog.mdl");
-	precache_model ("progs/dog.mdl");
 
-	precache_sound ("dog/dattack1.wav");
-	precache_sound ("dog/ddeath.wav");
-	precache_sound ("dog/dpain1.wav");
-	precache_sound ("dog/dsight.wav");
-	precache_sound ("dog/idle.wav");
+	if(!IsPrecacheDisallowed()) {
+		precache_model ("progs/h_dog.mdl");
+		precache_model ("progs/dog.mdl");
+
+		precache_sound ("dog/dattack1.wav");
+		precache_sound ("dog/ddeath.wav");
+		precache_sound ("dog/dpain1.wav");
+		precache_sound ("dog/dsight.wav");
+		precache_sound ("dog/idle.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -349,7 +352,7 @@ void() monster_dog =
 	setmodel (self, "progs/dog.mdl");
 
 	setsize (self, '-32 -32 -24', '32 32 40');
-	self.health = 25;
+	self.health = 25 * monsters_health_modifier;
 
 	self.th_stand = dog_stand1;
 	self.th_walk = dog_walk1;

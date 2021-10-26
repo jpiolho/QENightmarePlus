@@ -241,15 +241,18 @@ void() monster_knight =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/knight.mdl");
-	precache_model ("progs/h_knight.mdl");
 
-	precache_sound ("knight/kdeath.wav");
-	precache_sound ("knight/khurt.wav");
-	precache_sound ("knight/ksight.wav");
-	precache_sound ("knight/sword1.wav");
-	precache_sound ("knight/sword2.wav");
-	precache_sound ("knight/idle.wav");
+	if(!IsPrecacheDisallowed()) {
+		precache_model ("progs/knight.mdl");
+		precache_model ("progs/h_knight.mdl");
+
+		precache_sound ("knight/kdeath.wav");
+		precache_sound ("knight/khurt.wav");
+		precache_sound ("knight/ksight.wav");
+		precache_sound ("knight/sword1.wav");
+		precache_sound ("knight/sword2.wav");
+		precache_sound ("knight/idle.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -257,7 +260,7 @@ void() monster_knight =
 	setmodel (self, "progs/knight.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 75;
+	self.health = 75 * monsters_health_modifier;
 
 	self.th_stand = knight_stand1;
 	self.th_walk = knight_walk1;

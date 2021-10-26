@@ -317,20 +317,23 @@ void() monster_enforcer =
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/enforcer.mdl");
-	precache_model2 ("progs/h_mega.mdl");
-	precache_model2 ("progs/laser.mdl");
 
-	precache_sound2 ("enforcer/death1.wav");
-	precache_sound2 ("enforcer/enfire.wav");
-	precache_sound2 ("enforcer/enfstop.wav");
-	precache_sound2 ("enforcer/idle1.wav");
-	precache_sound2 ("enforcer/pain1.wav");
-	precache_sound2 ("enforcer/pain2.wav");
-	precache_sound2 ("enforcer/sight1.wav");
-	precache_sound2 ("enforcer/sight2.wav");
-	precache_sound2 ("enforcer/sight3.wav");
-	precache_sound2 ("enforcer/sight4.wav");
+	if(!IsPrecacheDisallowed()) {
+		precache_model2 ("progs/enforcer.mdl");
+		precache_model2 ("progs/h_mega.mdl");
+		precache_model2 ("progs/laser.mdl");
+
+		precache_sound2 ("enforcer/death1.wav");
+		precache_sound2 ("enforcer/enfire.wav");
+		precache_sound2 ("enforcer/enfstop.wav");
+		precache_sound2 ("enforcer/idle1.wav");
+		precache_sound2 ("enforcer/pain1.wav");
+		precache_sound2 ("enforcer/pain2.wav");
+		precache_sound2 ("enforcer/sight1.wav");
+		precache_sound2 ("enforcer/sight2.wav");
+		precache_sound2 ("enforcer/sight3.wav");
+		precache_sound2 ("enforcer/sight4.wav");
+	}
 	
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -338,7 +341,7 @@ void() monster_enforcer =
 	setmodel (self, "progs/enforcer.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 80;
+	self.health = 80 * monsters_health_modifier;
 
 	self.th_stand = enf_stand1;
 	self.th_walk = enf_walk1;

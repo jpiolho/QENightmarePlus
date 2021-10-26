@@ -379,17 +379,20 @@ void() monster_wizard =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/wizard.mdl");
-	precache_model ("progs/h_wizard.mdl");
-	precache_model ("progs/w_spike.mdl");
 
-	precache_sound ("wizard/hit.wav");		// used by c code
-	precache_sound ("wizard/wattack.wav");
-	precache_sound ("wizard/wdeath.wav");
-	precache_sound ("wizard/widle1.wav");
-	precache_sound ("wizard/widle2.wav");
-	precache_sound ("wizard/wpain.wav");
-	precache_sound ("wizard/wsight.wav");
+	if(!IsPrecacheDisallowed()) {
+		precache_model ("progs/wizard.mdl");
+		precache_model ("progs/h_wizard.mdl");
+		precache_model ("progs/w_spike.mdl");
+
+		precache_sound ("wizard/hit.wav");		// used by c code
+		precache_sound ("wizard/wattack.wav");
+		precache_sound ("wizard/wdeath.wav");
+		precache_sound ("wizard/widle1.wav");
+		precache_sound ("wizard/widle2.wav");
+		precache_sound ("wizard/wpain.wav");
+		precache_sound ("wizard/wsight.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -397,7 +400,7 @@ void() monster_wizard =
 	setmodel (self, "progs/wizard.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 80;
+	self.health = 80 * monsters_health_modifier;
 
 	self.th_stand = wiz_stand1;
 	self.th_walk = wiz_walk1;

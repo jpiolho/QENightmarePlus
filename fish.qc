@@ -160,11 +160,14 @@ void() monster_fish =
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/fish.mdl");
 
-	precache_sound2 ("fish/death.wav");
-	precache_sound2 ("fish/bite.wav");
-	precache_sound2 ("fish/idle.wav");
+	if(!IsPrecacheDisallowed()) {
+		precache_model2 ("progs/fish.mdl");
+
+		precache_sound2 ("fish/death.wav");
+		precache_sound2 ("fish/bite.wav");
+		precache_sound2 ("fish/idle.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -172,7 +175,7 @@ void() monster_fish =
 	setmodel (self, "progs/fish.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 24');
-	self.health = 25;
+	self.health = 25 * monsters_health_modifier;
 	
 	self.th_stand = f_stand1;
 	self.th_walk = f_walk1;

@@ -1,5 +1,6 @@
 
 void() InitBodyQue;
+void() nightmareplus_spawner;
 
 
 void() main =
@@ -337,7 +338,22 @@ void() worldspawn =
 
 	// 63 testing
 	lightstyle(63, "a");
+
+
+	local entity spawner = spawn();
+	spawner.classname = "nightmareplus_spawner";
+
+	local entity oself = self;
+	self = spawner;
+	nightmareplus_spawner();
+	self = oself;
 };
+
+
+float() IsPrecacheDisallowed = {
+	return framecount > 0;
+}
+
 
 void() StartFrame =
 {

@@ -193,6 +193,8 @@ void() health_touch =
 	{
 		if (deathmatch)
 			self.nextthink = time + 20;
+		else if (coop)
+			self.nextthink = time + 60;
 		self.think = SUB_regen;
 	}
 	
@@ -218,8 +220,12 @@ void() item_megahealth_rot =
 	if (deathmatch)	// deathmatch 2 is silly old rules
 	{
 		self.nextthink = time + 20;
-		self.think = SUB_regen;
 	}
+	else if(coop)
+	{
+		self.nextthink = time + 60;
+	}
+	self.think = SUB_regen;
 };
 
 /*
@@ -270,6 +276,8 @@ void() armor_touch =
 	self.model = string_null;
 	if (deathmatch)
 		self.nextthink = time + 20;
+	else if(coop)
+		self.nextthink = time + 60;
 	self.think = SUB_regen;
 
 	sprint(other, "You got armor\n");
@@ -490,6 +498,8 @@ void() weapon_touch =
 	self.solid = SOLID_NOT;
 	if (deathmatch)
 		self.nextthink = time + 30;
+	else if(coop)
+		self.nextthink = time + 60;
 	self.think = SUB_regen;
 	
 	activator = other;
@@ -671,6 +681,8 @@ local float		best;
 	self.solid = SOLID_NOT;
 	if (deathmatch)
 		self.nextthink = time + 30;
+	else if(coop)
+		self.nextthink = time + 60;
 	self.think = SUB_regen;
 
 	activator = other;

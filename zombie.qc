@@ -475,20 +475,22 @@ void() monster_zombie =
 		return;
 	}
 
-	precache_model ("progs/zombie.mdl");
-	precache_model ("progs/h_zombie.mdl");
-	precache_model ("progs/zom_gib.mdl");
+	if(!IsPrecacheDisallowed()) {
+		precache_model ("progs/zombie.mdl");
+		precache_model ("progs/h_zombie.mdl");
+		precache_model ("progs/zom_gib.mdl");
 
-	precache_sound ("zombie/z_idle.wav");
-	precache_sound ("zombie/z_idle1.wav");
-	precache_sound ("zombie/z_shot1.wav");
-	precache_sound ("zombie/z_gib.wav");
-	precache_sound ("zombie/z_pain.wav");
-	precache_sound ("zombie/z_pain1.wav");
-	precache_sound ("zombie/z_fall.wav");
-	precache_sound ("zombie/z_miss.wav");
-	precache_sound ("zombie/z_hit.wav");
-	precache_sound ("zombie/idle_w2.wav");
+		precache_sound ("zombie/z_idle.wav");
+		precache_sound ("zombie/z_idle1.wav");
+		precache_sound ("zombie/z_shot1.wav");
+		precache_sound ("zombie/z_gib.wav");
+		precache_sound ("zombie/z_pain.wav");
+		precache_sound ("zombie/z_pain1.wav");
+		precache_sound ("zombie/z_fall.wav");
+		precache_sound ("zombie/z_miss.wav");
+		precache_sound ("zombie/z_hit.wav");
+		precache_sound ("zombie/idle_w2.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -496,7 +498,7 @@ void() monster_zombie =
 	setmodel (self, "progs/zombie.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 60;
+	self.health = 60 * monsters_health_modifier;
 
 	self.th_stand = zombie_stand1;
 	self.th_walk = zombie_walk1;

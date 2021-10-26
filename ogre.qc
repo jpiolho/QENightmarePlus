@@ -421,17 +421,21 @@ void() monster_ogre =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/ogre.mdl");
-	precache_model ("progs/h_ogre.mdl");
-	precache_model ("progs/grenade.mdl");
 
-	precache_sound ("ogre/ogdrag.wav");
-	precache_sound ("ogre/ogdth.wav");
-	precache_sound ("ogre/ogidle.wav");
-	precache_sound ("ogre/ogidle2.wav");
-	precache_sound ("ogre/ogpain1.wav");
-	precache_sound ("ogre/ogsawatk.wav");
-	precache_sound ("ogre/ogwake.wav");
+	if(!IsPrecacheDisallowed())
+	{
+		precache_model ("progs/ogre.mdl");
+		precache_model ("progs/h_ogre.mdl");
+		precache_model ("progs/grenade.mdl");
+
+		precache_sound ("ogre/ogdrag.wav");
+		precache_sound ("ogre/ogdth.wav");
+		precache_sound ("ogre/ogidle.wav");
+		precache_sound ("ogre/ogidle2.wav");
+		precache_sound ("ogre/ogpain1.wav");
+		precache_sound ("ogre/ogsawatk.wav");
+		precache_sound ("ogre/ogwake.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -439,7 +443,7 @@ void() monster_ogre =
 	setmodel (self, "progs/ogre.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 200;
+	self.health = 200 * monsters_health_modifier;
 
 	self.th_stand = ogre_stand1;
 	self.th_walk = ogre_walk1;

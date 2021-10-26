@@ -403,22 +403,25 @@ void() monster_hell_knight =
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/hknight.mdl");
-	precache_model2 ("progs/k_spike.mdl");
-	precache_model2 ("progs/h_hellkn.mdl");
 
-	
-	precache_sound2 ("hknight/attack1.wav");
-	precache_sound2 ("hknight/death1.wav");
-	precache_sound2 ("hknight/pain1.wav");
-	precache_sound2 ("hknight/sight1.wav");
-	precache_sound ("hknight/hit.wav");		// used by C code, so don't sound2
-	precache_sound2 ("hknight/slash1.wav");
-	precache_sound2 ("hknight/idle.wav");
-	precache_sound2 ("hknight/grunt.wav");
+	if(!IsPrecacheDisallowed()) {
+		precache_model2 ("progs/hknight.mdl");
+		precache_model2 ("progs/k_spike.mdl");
+		precache_model2 ("progs/h_hellkn.mdl");
 
-	precache_sound ("knight/sword1.wav");
-	precache_sound ("knight/sword2.wav");
+		
+		precache_sound2 ("hknight/attack1.wav");
+		precache_sound2 ("hknight/death1.wav");
+		precache_sound2 ("hknight/pain1.wav");
+		precache_sound2 ("hknight/sight1.wav");
+		precache_sound ("hknight/hit.wav");		// used by C code, so don't sound2
+		precache_sound2 ("hknight/slash1.wav");
+		precache_sound2 ("hknight/idle.wav");
+		precache_sound2 ("hknight/grunt.wav");
+
+		precache_sound ("knight/sword1.wav");
+		precache_sound ("knight/sword2.wav");
+	}
 	
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -426,7 +429,7 @@ void() monster_hell_knight =
 	setmodel (self, "progs/hknight.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 250;
+	self.health = 250 * monsters_health_modifier;
 
 	self.th_stand = hknight_stand1;
 	self.th_walk = hknight_walk1;

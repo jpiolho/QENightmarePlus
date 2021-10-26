@@ -333,27 +333,30 @@ void() monster_shambler =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/shambler.mdl");
-	precache_model ("progs/s_light.mdl");
-	precache_model ("progs/h_shams.mdl");
-	precache_model ("progs/bolt.mdl");
-	
-	precache_sound ("shambler/sattck1.wav");
-	precache_sound ("shambler/sboom.wav");
-	precache_sound ("shambler/sdeath.wav");
-	precache_sound ("shambler/shurt2.wav");
-	precache_sound ("shambler/sidle.wav");
-	precache_sound ("shambler/ssight.wav");
-	precache_sound ("shambler/melee1.wav");
-	precache_sound ("shambler/melee2.wav");
-	precache_sound ("shambler/smack.wav");
+
+	if(!IsPrecacheDisallowed()) {
+		precache_model ("progs/shambler.mdl");
+		precache_model ("progs/s_light.mdl");
+		precache_model ("progs/h_shams.mdl");
+		precache_model ("progs/bolt.mdl");
+		
+		precache_sound ("shambler/sattck1.wav");
+		precache_sound ("shambler/sboom.wav");
+		precache_sound ("shambler/sdeath.wav");
+		precache_sound ("shambler/shurt2.wav");
+		precache_sound ("shambler/sidle.wav");
+		precache_sound ("shambler/ssight.wav");
+		precache_sound ("shambler/melee1.wav");
+		precache_sound ("shambler/melee2.wav");
+		precache_sound ("shambler/smack.wav");
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	setmodel (self, "progs/shambler.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 600;
+	self.health = 600 * monsters_health_modifier;
 
 	self.th_stand = sham_stand1;
 	self.th_walk = sham_walk1;

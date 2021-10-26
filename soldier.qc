@@ -218,8 +218,11 @@ void()	army_cdie10	=[	$deathc10,	army_cdie11	] {};
 void()	army_cdie11	=[	$deathc11,	army_cdie11	] {};
 
 
+
+
 void() army_die =
 {
+	eprint(attacker);
 // check for gib
 	if (self.health < -35)
 	{
@@ -249,21 +252,23 @@ void() monster_army =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/soldier.mdl");
-	precache_model ("progs/h_guard.mdl");
-	precache_model ("progs/gib1.mdl");
-	precache_model ("progs/gib2.mdl");
-	precache_model ("progs/gib3.mdl");
 
-	precache_sound ("soldier/death1.wav");
-	precache_sound ("soldier/idle.wav");
-	precache_sound ("soldier/pain1.wav");
-	precache_sound ("soldier/pain2.wav");
-	precache_sound ("soldier/sattck1.wav");
-	precache_sound ("soldier/sight1.wav");
+	if(!IsPrecacheDisallowed()) {
+		precache_model ("progs/soldier.mdl");
+		precache_model ("progs/h_guard.mdl");
+		precache_model ("progs/gib1.mdl");
+		precache_model ("progs/gib2.mdl");
+		precache_model ("progs/gib3.mdl");
 
-	precache_sound ("player/udeath.wav");		// gib death
+		precache_sound ("soldier/death1.wav");
+		precache_sound ("soldier/idle.wav");
+		precache_sound ("soldier/pain1.wav");
+		precache_sound ("soldier/pain2.wav");
+		precache_sound ("soldier/sattck1.wav");
+		precache_sound ("soldier/sight1.wav");
 
+		precache_sound ("player/udeath.wav");		// gib death
+	}
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -271,7 +276,7 @@ void() monster_army =
 	setmodel (self, "progs/soldier.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 30;
+	self.health = 30 * monsters_health_modifier;
 
 	self.th_stand = army_stand1;
 	self.th_walk = army_walk1;

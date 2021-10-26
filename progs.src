@@ -1,6 +1,7 @@
 ../progs.dat
 
 defs.qc
+math.qc
 subs.qc
 maps.qc
 fight.qc
@@ -34,3 +35,5 @@ fish.qc			// registered
 shalrath.qc		// registered
 enforcer.qc		// registered
 oldone.qc		// registered
+
+nightmareplus.qc

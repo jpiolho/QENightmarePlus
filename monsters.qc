@@ -11,6 +11,8 @@
 // };
 
 
+float monsters_health_modifier = 2;
+
 /*
 ================
 monster_use

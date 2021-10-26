@@ -195,20 +195,23 @@ void() monster_tarbaby =
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/tarbaby.mdl");
 
-	precache_sound2 ("blob/death1.wav");
-	precache_sound2 ("blob/hit1.wav");
-	precache_sound2 ("blob/land1.wav");
-	precache_sound2 ("blob/sight1.wav");
-	
+	if(!IsPrecacheDisallowed()) {
+		precache_model2 ("progs/tarbaby.mdl");
+
+		precache_sound2 ("blob/death1.wav");
+		precache_sound2 ("blob/hit1.wav");
+		precache_sound2 ("blob/land1.wav");
+		precache_sound2 ("blob/sight1.wav");
+	}
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
 	setmodel (self, "progs/tarbaby.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 80;
+	self.health = 80 * monsters_health_modifier;
 
 	self.th_stand = tbaby_stand1;
 	self.th_walk = tbaby_walk1;
