@@ -498,7 +498,7 @@ void() monster_zombie =
 	setmodel (self, "progs/zombie.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 60 * monsters_health_modifier;
+	self.health = 60 * (monsters_health_modifier * 0.5);
 
 	self.th_stand = zombie_stand1;
 	self.th_walk = zombie_walk1;
