@@ -59,6 +59,25 @@ void() SetChangeParms =
 	parm7 = self.ammo_cells;
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
+
+	local entity p = world;
+
+	while(p = find(p,classname,"player"))
+	{
+		// Copy weapons
+		if(p.items & IT_SUPER_SHOTGUN) parm1 |= IT_SUPER_SHOTGUN;
+		if(p.items & IT_SUPER_NAILGUN) parm1 |= IT_SUPER_NAILGUN;
+		if(p.items & IT_NAILGUN) parm1 |= IT_NAILGUN;
+		if(p.items & IT_GRENADE_LAUNCHER) parm1 |= IT_GRENADE_LAUNCHER;
+		if(p.items & IT_LIGHTNING) parm1 |= IT_LIGHTNING;
+		if(p.items & IT_ROCKET_LAUNCHER) parm1 |= IT_ROCKET_LAUNCHER;
+		if(p.items & IT_AXE) parm1 |= IT_AXE;
+
+		// Copy the best armor
+		if(!(parm1 & IT_ARMOR3) && p.items & IT_ARMOR3) parm1 |= IT_ARMOR3;
+		else if(!(parm1 & IT_ARMOR2) && p.items & IT_ARMOR2) parm1 |= IT_ARMOR2;
+		else if(!(parm1 & IT_ARMOR1) && p.items & IT_ARMOR1) parm1 |= IT_ARMOR1;
+	}
 };
 
 void() SetNewParms =
