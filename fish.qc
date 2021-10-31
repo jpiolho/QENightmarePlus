@@ -169,6 +169,8 @@ void() monster_fish =
 		precache_sound2 ("fish/idle.wav");
 	}
 
+	NightmarePlus_CreateSpawnerIfNeeded();
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 

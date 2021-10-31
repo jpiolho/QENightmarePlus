@@ -205,6 +205,8 @@ void() monster_tarbaby =
 		precache_sound2 ("blob/sight1.wav");
 	}
 
+	NightmarePlus_CreateSpawnerIfNeeded();
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 

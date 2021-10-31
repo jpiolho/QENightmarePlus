@@ -422,6 +422,8 @@ void() monster_hell_knight =
 		precache_sound ("knight/sword1.wav");
 		precache_sound ("knight/sword2.wav");
 	}
+
+	NightmarePlus_CreateSpawnerIfNeeded();
 	
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;

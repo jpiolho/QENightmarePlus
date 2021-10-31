@@ -437,6 +437,8 @@ void() monster_ogre =
 		precache_sound ("ogre/ogwake.wav");
 	}
 
+	NightmarePlus_CreateSpawnerIfNeeded();
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 

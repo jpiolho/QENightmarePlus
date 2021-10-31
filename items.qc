@@ -339,14 +339,14 @@ WEAPONS
 
 void() bound_other_ammo =
 {
-	if (other.ammo_shells > 100)
-		other.ammo_shells = 100;
-	if (other.ammo_nails > 200)
-		other.ammo_nails = 200;
-	if (other.ammo_rockets > 100)
-		other.ammo_rockets = 100;		
-	if (other.ammo_cells > 100)
-		other.ammo_cells = 100;		
+	if (other.ammo_shells > NightmarePlus_GetAmmoAmount(100))
+		other.ammo_shells = NightmarePlus_GetAmmoAmount(100);
+	if (other.ammo_nails > NightmarePlus_GetAmmoAmount(200))
+		other.ammo_nails = NightmarePlus_GetAmmoAmount(200);
+	if (other.ammo_rockets > NightmarePlus_GetAmmoAmount(100))
+		other.ammo_rockets = NightmarePlus_GetAmmoAmount(100);		
+	if (other.ammo_cells > NightmarePlus_GetAmmoAmount(100))
+		other.ammo_cells = NightmarePlus_GetAmmoAmount(100);		
 };
 
 
@@ -416,51 +416,63 @@ void() weapon_touch =
 	
 	if (self.classname == "weapon_nailgun")
 	{
+		foundItems |= IT_NAILGUN;
+
 		if (leave && (other.items & IT_NAILGUN) )
 			return;
 		hadammo = other.ammo_nails;			
 		new = IT_NAILGUN;
-		other.ammo_nails = other.ammo_nails + 30;
+		other.ammo_nails = other.ammo_nails + NightmarePlus_GetAmmoAmount(30);
 	}
 	else if (self.classname == "weapon_supernailgun")
 	{
+		foundItems |= IT_SUPER_NAILGUN;
+
 		if (leave && (other.items & IT_SUPER_NAILGUN) )
 			return;
 		hadammo = other.ammo_rockets;			
 		new = IT_SUPER_NAILGUN;
-		other.ammo_nails = other.ammo_nails + 30;
+		other.ammo_nails = other.ammo_nails + NightmarePlus_GetAmmoAmount(30);
 	}
 	else if (self.classname == "weapon_supershotgun")
 	{
+		foundItems |= IT_SUPER_SHOTGUN;
+
 		if (leave && (other.items & IT_SUPER_SHOTGUN) )
 			return;
 		hadammo = other.ammo_rockets;			
 		new = IT_SUPER_SHOTGUN;
-		other.ammo_shells = other.ammo_shells + 5;
+		other.ammo_shells = other.ammo_shells + NightmarePlus_GetAmmoAmount(5);
 	}
 	else if (self.classname == "weapon_rocketlauncher")
 	{
+		foundItems |= IT_ROCKET_LAUNCHER;
+
 		if (leave && (other.items & IT_ROCKET_LAUNCHER) )
 			return;
 		hadammo = other.ammo_rockets;			
 		new = IT_ROCKET_LAUNCHER;
-		other.ammo_rockets = other.ammo_rockets + 5;
+		other.ammo_rockets = other.ammo_rockets + NightmarePlus_GetAmmoAmount(5);
 	}
 	else if (self.classname == "weapon_grenadelauncher")
 	{
+		foundItems |= IT_GRENADE_LAUNCHER;
+
 		if (leave && (other.items & IT_GRENADE_LAUNCHER) )
 			return;
 		hadammo = other.ammo_rockets;			
 		new = IT_GRENADE_LAUNCHER;
-		other.ammo_rockets = other.ammo_rockets + 5;
+		other.ammo_rockets = other.ammo_rockets + NightmarePlus_GetAmmoAmount(5);
 	}
 	else if (self.classname == "weapon_lightning")
 	{
+		foundItems |= IT_LIGHTNING;
+
 		if (leave && (other.items & IT_LIGHTNING) )
 			return;
 		hadammo = other.ammo_rockets;			
 		new = IT_LIGHTNING;
-		other.ammo_cells = other.ammo_cells + 15;
+		other.ammo_cells = other.ammo_cells + NightmarePlus_GetAmmoAmount(15);
 	}
 	else
 		objerror ("weapon_touch: unknown classname");
@@ -621,7 +633,7 @@ local float		best;
 // shotgun
 	if (self.weapon == 1)
 	{
-		if (other.ammo_shells >= 100)
+		if (other.ammo_shells >= NightmarePlus_GetAmmoAmount(100))
 			return;
 		other.ammo_shells = other.ammo_shells + self.aflag;
 	}
@@ -629,7 +641,7 @@ local float		best;
 // spikes
 	if (self.weapon == 2)
 	{
-		if (other.ammo_nails >= 200)
+		if (other.ammo_nails >= NightmarePlus_GetAmmoAmount(200))
 			return;
 		other.ammo_nails = other.ammo_nails + self.aflag;
 	}
@@ -637,7 +649,7 @@ local float		best;
 //	rockets
 	if (self.weapon == 3)
 	{
-		if (other.ammo_rockets >= 100)
+		if (other.ammo_rockets >= NightmarePlus_GetAmmoAmount(100))
 			return;
 		other.ammo_rockets = other.ammo_rockets + self.aflag;
 	}
@@ -645,7 +657,7 @@ local float		best;
 //	cells
 	if (self.weapon == 4)
 	{
-		if (other.ammo_cells >= 100)
+		if (other.ammo_cells >= NightmarePlus_GetAmmoAmount(100))
 			return;
 		other.ammo_cells = other.ammo_cells + self.aflag;
 	}
@@ -705,13 +717,13 @@ void() item_shells =
 	{
 		precache_model ("maps/b_shell1.bsp");
 		setmodel (self, "maps/b_shell1.bsp");
-		self.aflag = 40;
+		self.aflag = NightmarePlus_GetAmmoAmount(40);
 	}
 	else
 	{
 		precache_model ("maps/b_shell0.bsp");
 		setmodel (self, "maps/b_shell0.bsp");
-		self.aflag = 20;
+		self.aflag = NightmarePlus_GetAmmoAmount(20);
 	}
 	self.weapon = 1;
 	self.netname = "shells";
@@ -730,13 +742,13 @@ void() item_spikes =
 	{
 		precache_model ("maps/b_nail1.bsp");
 		setmodel (self, "maps/b_nail1.bsp");
-		self.aflag = 50;
+		self.aflag = NightmarePlus_GetAmmoAmount(50);
 	}
 	else
 	{
 		precache_model ("maps/b_nail0.bsp");
 		setmodel (self, "maps/b_nail0.bsp");
-		self.aflag = 25;
+		self.aflag = NightmarePlus_GetAmmoAmount(25);
 	}
 	self.weapon = 2;
 	self.netname = "nails";
@@ -755,13 +767,13 @@ void() item_rockets =
 	{
 		precache_model ("maps/b_rock1.bsp");
 		setmodel (self, "maps/b_rock1.bsp");
-		self.aflag = 10;
+		self.aflag = NightmarePlus_GetAmmoAmount(10);
 	}
 	else
 	{
 		precache_model ("maps/b_rock0.bsp");
 		setmodel (self, "maps/b_rock0.bsp");
-		self.aflag = 5;
+		self.aflag = NightmarePlus_GetAmmoAmount(5);
 	}
 	self.weapon = 3;
 	self.netname = "rockets";
@@ -781,13 +793,13 @@ void() item_cells =
 	{
 		precache_model ("maps/b_batt1.bsp");
 		setmodel (self, "maps/b_batt1.bsp");
-		self.aflag = 12;
+		self.aflag = NightmarePlus_GetAmmoAmount(12);
 	}
 	else
 	{
 		precache_model ("maps/b_batt0.bsp");
 		setmodel (self, "maps/b_batt0.bsp");
-		self.aflag = 6;
+		self.aflag = NightmarePlus_GetAmmoAmount(6);
 	}
 	self.weapon = 4;
 	self.netname = "cells";
@@ -814,13 +826,13 @@ void() item_weapon =
 		{
 			precache_model ("maps/b_shell1.bsp");
 			setmodel (self, "maps/b_shell1.bsp");
-			self.aflag = 40;
+			self.aflag = NightmarePlus_GetAmmoAmount(40);
 		}
 		else
 		{
 			precache_model ("maps/b_shell0.bsp");
 			setmodel (self, "maps/b_shell0.bsp");
-			self.aflag = 20;
+			self.aflag = NightmarePlus_GetAmmoAmount(20);
 		}
 		self.weapon = 1;
 		self.netname = "shells";
@@ -832,13 +844,13 @@ void() item_weapon =
 		{
 			precache_model ("maps/b_nail1.bsp");
 			setmodel (self, "maps/b_nail1.bsp");
-			self.aflag = 40;
+			self.aflag = NightmarePlus_GetAmmoAmount(40);
 		}
 		else
 		{
 			precache_model ("maps/b_nail0.bsp");
 			setmodel (self, "maps/b_nail0.bsp");
-			self.aflag = 20;
+			self.aflag = NightmarePlus_GetAmmoAmount(20);
 		}
 		self.weapon = 2;
 		self.netname = "spikes";
@@ -850,13 +862,13 @@ void() item_weapon =
 		{
 			precache_model ("maps/b_rock1.bsp");
 			setmodel (self, "maps/b_rock1.bsp");
-			self.aflag = 10;
+			self.aflag = NightmarePlus_GetAmmoAmount(10);
 		}
 		else
 		{
 			precache_model ("maps/b_rock0.bsp");
 			setmodel (self, "maps/b_rock0.bsp");
-			self.aflag = 5;
+			self.aflag = NightmarePlus_GetAmmoAmount(5);
 		}
 		self.weapon = 3;
 		self.netname = "rockets";
@@ -884,6 +896,9 @@ local float		best;
 		return;
 	if (other.health <= 0)
 		return;
+
+	foundItems |= self.items;
+
 	if (other.items & self.items)
 		return;
 

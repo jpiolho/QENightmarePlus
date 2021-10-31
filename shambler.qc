@@ -351,6 +351,8 @@ void() monster_shambler =
 		precache_sound ("shambler/smack.wav");
 	}
 
+	NightmarePlus_CreateSpawnerIfNeeded();
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	setmodel (self, "progs/shambler.mdl");

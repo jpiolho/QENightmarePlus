@@ -222,6 +222,8 @@ void() monster_shalrath =
 		precache_sound2 ("shalrath/sight.wav");
 	}
 	
+	NightmarePlus_CreateSpawnerIfNeeded();
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	

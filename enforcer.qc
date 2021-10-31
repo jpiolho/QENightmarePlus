@@ -334,6 +334,8 @@ void() monster_enforcer =
 		precache_sound2 ("enforcer/sight3.wav");
 		precache_sound2 ("enforcer/sight4.wav");
 	}
+
+	NightmarePlus_CreateSpawnerIfNeeded();
 	
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;

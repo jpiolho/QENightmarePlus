@@ -346,6 +346,8 @@ void() monster_dog =
 		precache_sound ("dog/idle.wav");
 	}
 
+	NightmarePlus_CreateSpawnerIfNeeded();
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 

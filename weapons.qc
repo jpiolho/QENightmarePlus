@@ -1030,9 +1030,9 @@ void() CheatCommand =
 	if (deathmatch || coop)
 		return;
 
-	self.ammo_rockets = 100;
-	self.ammo_nails = 200;
-	self.ammo_shells = 100;
+	self.ammo_rockets = NightmarePlus_GetAmmoAmount(100);
+	self.ammo_nails = NightmarePlus_GetAmmoAmount(200);
+	self.ammo_shells = NightmarePlus_GetAmmoAmount(100);
 	self.items = self.items | 
 		IT_AXE |
 		IT_SHOTGUN |
@@ -1043,7 +1043,7 @@ void() CheatCommand =
 		IT_ROCKET_LAUNCHER |
 		IT_KEY1 | IT_KEY2;
 
-	self.ammo_cells = 200;
+	self.ammo_cells = NightmarePlus_GetAmmoAmount(200);
 	self.items = self.items | IT_LIGHTNING;
 
 	self.weapon = IT_ROCKET_LAUNCHER;

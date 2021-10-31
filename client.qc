@@ -43,47 +43,29 @@ void() SetChangeParms =
 	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
 	
 // cap super health
-	if (self.health > 100)
-		self.health = 100;
+	if (self.health > self.max_health)
+		self.health = self.max_health;
 	if (self.health < 50)
 		self.health = 50;
 	parm1 = self.items;
 	parm2 = self.health;
 	parm3 = self.armorvalue;
-	if (self.ammo_shells < 25)
-		parm4 = 25;
-	else
-		parm4 = self.ammo_shells;
-	parm5 = self.ammo_nails;
-	parm6 = self.ammo_rockets;
-	parm7 = self.ammo_cells;
+	parm4 = self.ammo_shells < NightmarePlus_GetAmmoAmount(25) ? NightmarePlus_GetAmmoAmount(25) : self.ammo_shells;
+	parm5 = self.ammo_nails < NightmarePlus_GetAmmoAmount(40) ? NightmarePlus_GetAmmoAmount(40) : self.ammo_nails;
+	parm6 = self.ammo_rockets < NightmarePlus_GetAmmoAmount(5) ? NightmarePlus_GetAmmoAmount(5) : self.ammo_rockets;
+	parm7 = self.ammo_cells < NightmarePlus_GetAmmoAmount(20) ? NightmarePlus_GetAmmoAmount(20) : self.ammo_cells;
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
 
-	local entity p = world;
+	if(!(gamemode & GM_DONT_CARRY_ITEMS_OVER))
+		parm1 |= foundItems - (foundItems & (IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD));
 
-	while(p = find(p,classname,"player"))
-	{
-		// Copy weapons
-		if(p.items & IT_SUPER_SHOTGUN) parm1 |= IT_SUPER_SHOTGUN;
-		if(p.items & IT_SUPER_NAILGUN) parm1 |= IT_SUPER_NAILGUN;
-		if(p.items & IT_NAILGUN) parm1 |= IT_NAILGUN;
-		if(p.items & IT_GRENADE_LAUNCHER) parm1 |= IT_GRENADE_LAUNCHER;
-		if(p.items & IT_LIGHTNING) parm1 |= IT_LIGHTNING;
-		if(p.items & IT_ROCKET_LAUNCHER) parm1 |= IT_ROCKET_LAUNCHER;
-		if(p.items & IT_AXE) parm1 |= IT_AXE;
-
-		// Copy the best armor
-		if(!(parm1 & IT_ARMOR3) && p.items & IT_ARMOR3) parm1 |= IT_ARMOR3;
-		else if(!(parm1 & IT_ARMOR2) && p.items & IT_ARMOR2) parm1 |= IT_ARMOR2;
-		else if(!(parm1 & IT_ARMOR1) && p.items & IT_ARMOR1) parm1 |= IT_ARMOR1;
-	}
 };
 
 void() SetNewParms =
 {
 	parm1 = IT_SHOTGUN | IT_AXE;
-	parm2 = 100;
+	parm2 = (skill == SKILL_NIGHTMARE && gamemode & GM_NIGHTMARE_50_HEALTH) ? 50 : 100;
 	parm3 = 0;
 	parm4 = 25;
 	parm5 = 0;
@@ -104,12 +86,27 @@ void() DecodeLevelParms =
 	self.items = parm1;
 	self.health = parm2;
 	self.armorvalue = parm3;
+	
+	self.ammo_shells = parm4 < NightmarePlus_GetAmmoAmount(25) ? NightmarePlus_GetAmmoAmount(25) : parm4;
+	self.ammo_nails = parm5  < NightmarePlus_GetAmmoAmount(40) ? NightmarePlus_GetAmmoAmount(40) : parm5;
+	self.ammo_rockets = parm6 < NightmarePlus_GetAmmoAmount(5) ? NightmarePlus_GetAmmoAmount(5) : parm6;
+	self.ammo_cells = parm7 < NightmarePlus_GetAmmoAmount(20) ? NightmarePlus_GetAmmoAmount(20) : parm7;
+
 	self.ammo_shells = parm4;
 	self.ammo_nails = parm5;
 	self.ammo_rockets = parm6;
 	self.ammo_cells = parm7;
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
+
+
+	if(parm1 & IT_GRENADE_LAUNCHER) foundItems |= IT_GRENADE_LAUNCHER;
+	if(parm1 & IT_SHOTGUN) foundItems |= IT_SHOTGUN;
+	if(parm1 & IT_SUPER_NAILGUN) foundItems |= IT_SUPER_NAILGUN;
+	if(parm1 & IT_SUPER_SHOTGUN) foundItems |= IT_SUPER_SHOTGUN;
+	if(parm1 & IT_LIGHTNING) foundItems |= IT_LIGHTNING;
+	if(parm1 & IT_ROCKET_LAUNCHER) foundItems |= IT_ROCKET_LAUNCHER;
+	if(parm1 & IT_NAILGUN) foundItems |= IT_NAILGUN;
 };
 
 /*
@@ -518,7 +515,17 @@ void() PutClientInServer =
 	self.effects = 0;
 	self.invincible_time = 0;
 
+	if(skill == SKILL_NIGHTMARE && gamemode & GM_NIGHTMARE_50_HEALTH) {
+		self.health = 50;
+		self.max_health = 50;
+	}
+
+
 	DecodeLevelParms ();
+
+	if(!(gamemode & GM_DONT_CARRY_ITEMS_OVER))
+		self.items |= foundItems;
+
 	
 	W_SetCurrentAmmo ();
 
@@ -929,6 +936,13 @@ void() PlayerPreThink =
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
 
+	if(self.cnt == 0) {
+		centerprint(self,"Welcome to Nightmare+\nHarder than nightmare!\n\nAny bugs are probably related to the mod\n\nHave fun!");
+
+		// Mark as message sent
+		self.cnt = 1;
+	}
+
 	makevectors (self.v_angle);		// is this still used
 
 	CheckRules ();
@@ -1137,6 +1151,7 @@ void() PlayerPostThink =
 	if (self.deadflag)
 		return;
 		
+	//Debug_DrawBounds();
 // do weapon stuff
 
 	W_WeaponFrame ();

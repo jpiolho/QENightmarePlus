@@ -197,6 +197,8 @@ void() monster_demon1 =
 		precache_sound ("demon/sight2.wav");
 	}
 
+	NightmarePlus_CreateSpawnerIfNeeded();
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 

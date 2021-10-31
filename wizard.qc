@@ -394,6 +394,8 @@ void() monster_wizard =
 		precache_sound ("wizard/wsight.wav");
 	}
 
+	NightmarePlus_CreateSpawnerIfNeeded();
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 

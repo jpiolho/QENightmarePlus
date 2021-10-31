@@ -3,6 +3,8 @@
 defs.qc
 math.qc
 subs.qc
+nightmareplus_defs.qc
+nightmareplus_subs.qc
 maps.qc
 fight.qc
 ai.qc

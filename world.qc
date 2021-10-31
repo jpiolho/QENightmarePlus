@@ -1,7 +1,7 @@
 
-void() InitBodyQue;
-void() nightmareplus_spawner;
 
+
+void() InitBodyQue;
 
 void() main =
 {
@@ -153,6 +153,7 @@ void() main =
 	precache_file2 ("maps/dm4.bsp");
 	precache_file2 ("maps/dm5.bsp");
 	precache_file2 ("maps/dm6.bsp");
+
 };
 
 
@@ -340,13 +341,11 @@ void() worldspawn =
 	lightstyle(63, "a");
 
 
-	local entity spawner = spawn();
-	spawner.classname = "nightmareplus_spawner";
 
-	local entity oself = self;
-	self = spawner;
-	nightmareplus_spawner();
-	self = oself;
+	gamemode = cvar("saved1");
+	foundItems = 0; // Reset found weapons
+
+	NightmarePlus_LoadGamemode();
 };
 
 

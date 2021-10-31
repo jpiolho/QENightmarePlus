@@ -512,6 +512,9 @@ void() monster_zombie =
 		self.movetype = MOVETYPE_NONE;
 		zombie_cruc1 ();
 	}
-	else
+	else {
+		NightmarePlus_CreateSpawnerIfNeeded();
+		
 		walkmonster_start();
+	}
 };
