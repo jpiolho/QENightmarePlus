@@ -50,10 +50,10 @@ void() SetChangeParms =
 	parm1 = self.items;
 	parm2 = self.health;
 	parm3 = self.armorvalue;
-	parm4 = self.ammo_shells < NightmarePlus_GetAmmoAmount(25) ? NightmarePlus_GetAmmoAmount(25) : self.ammo_shells;
-	parm5 = self.ammo_nails < NightmarePlus_GetAmmoAmount(40) ? NightmarePlus_GetAmmoAmount(40) : self.ammo_nails;
-	parm6 = self.ammo_rockets < NightmarePlus_GetAmmoAmount(5) ? NightmarePlus_GetAmmoAmount(5) : self.ammo_rockets;
-	parm7 = self.ammo_cells < NightmarePlus_GetAmmoAmount(20) ? NightmarePlus_GetAmmoAmount(20) : self.ammo_cells;
+	parm4 = self.ammo_shells;
+	parm5 = self.ammo_nails;
+	parm6 = self.ammo_rockets;
+	parm7 = self.ammo_cells;
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
 
@@ -67,7 +67,7 @@ void() SetNewParms =
 	parm1 = IT_SHOTGUN | IT_AXE;
 	parm2 = (skill == SKILL_NIGHTMARE && gamemode & GM_NIGHTMARE_50_HEALTH) ? 50 : 100;
 	parm3 = 0;
-	parm4 = 25;
+	parm4 = NightmarePlus_GetAmmoAmount(25);
 	parm5 = 0;
 	parm6 = 0;
 	parm7 = 0;
@@ -88,14 +88,23 @@ void() DecodeLevelParms =
 	self.armorvalue = parm3;
 	
 	self.ammo_shells = parm4 < NightmarePlus_GetAmmoAmount(25) ? NightmarePlus_GetAmmoAmount(25) : parm4;
-	self.ammo_nails = parm5  < NightmarePlus_GetAmmoAmount(40) ? NightmarePlus_GetAmmoAmount(40) : parm5;
-	self.ammo_rockets = parm6 < NightmarePlus_GetAmmoAmount(5) ? NightmarePlus_GetAmmoAmount(5) : parm6;
-	self.ammo_cells = parm7 < NightmarePlus_GetAmmoAmount(20) ? NightmarePlus_GetAmmoAmount(20) : parm7;
 
+	if(!(gamemode & GM_DONT_START_WITH_EXTRA_AMMO)) {
+		self.ammo_nails = parm5  < NightmarePlus_GetAmmoAmount(40) ? NightmarePlus_GetAmmoAmount(40) : parm5;
+		self.ammo_rockets = parm6 < NightmarePlus_GetAmmoAmount(5) ? NightmarePlus_GetAmmoAmount(5) : parm6;
+		self.ammo_cells = parm7 < NightmarePlus_GetAmmoAmount(20) ? NightmarePlus_GetAmmoAmount(20) : parm7;
+	}
+	else {
+		self.ammo_nails = parm5;
+		self.ammo_rockets = parm6;
+		self.ammo_cells = parm7;
+	}
+	/*
 	self.ammo_shells = parm4;
 	self.ammo_nails = parm5;
 	self.ammo_rockets = parm6;
 	self.ammo_cells = parm7;
+	*/
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
 

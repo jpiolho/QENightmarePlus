@@ -1,3 +1,7 @@
+float MT_WALKER = 0;
+float MT_FLYER = 1;
+float MT_AQUACTIC = 2;
+
 float(vector start,vector end) NightmarePlus_TestEdge =
 {
     if(pointcontents(start) != CONTENT_EMPTY || pointcontents(end) != CONTENT_EMPTY)
@@ -78,7 +82,95 @@ void() Debug_DrawBounds =
     */
 }
 
-float(vector placement,vector monsterMins,vector monsterMaxs) NightmarePlus_TestPlacement = 
+
+float(vector placement,vector monsterMins,vector monsterMaxs) NightmarePlus_IsThereFloorUnderneath =
+{
+    local entity tester = spawn();
+
+    tester.mins = monsterMins;
+    tester.maxs = monsterMaxs;
+    tester.origin = placement;
+
+
+    local entity oself = self;
+    self = tester;
+    local float result = droptofloor();
+    self = oself;
+
+    remove(tester);
+
+    if(!result)
+        return FALSE;
+
+    return vlen(placement - tester.origin) <= 24;
+
+    /*
+    local float maxFloorDistance = 24;
+    local vector vec1;
+    local vector vec2;
+    
+    vec1_x = placement_x + monsterMins_x;
+    vec1_y = placement_y + monsterMins_y;
+    vec1_z = placement_z + monsterMins_z;
+
+    vec2 = vec1;
+    vec2_z -= 99999;
+
+    traceline(vec1,vec2,FALSE,self);
+    if(vlen(vec1 - trace_endpos) > maxFloorDistance || trace_ent)
+    {
+        vec1_x = placement_x + monsterMins_x;
+        vec1_y = placement_y + monsterMaxs_y;
+        vec1_z = placement_z + monsterMins_z;
+    
+        vec2 = vec1;
+        vec2_z -= 99999;
+    
+        traceline(vec1,vec2,FALSE,self);
+        if(vlen(vec1 - trace_endpos) > maxFloorDistance || trace_ent)
+        {
+            vec1_x = placement_x + monsterMaxs_x;
+            vec1_y = placement_y + monsterMaxs_y;
+            vec1_z = placement_z + monsterMins_z;
+        
+            vec2 = vec1;
+            vec2_z -= 99999;
+        
+            traceline(vec1,vec2,FALSE,self);
+            if(vlen(vec1 - trace_endpos) > maxFloorDistance || trace_ent)
+            {
+                vec1_x = placement_x + monsterMaxs_x;
+                vec1_y = placement_y + monsterMins_y;
+                vec1_z = placement_z + monsterMins_z;
+
+                vec2 = vec1;
+                vec2_z -= 99999;
+
+                traceline(vec1,vec2,FALSE,self);
+                if(vlen(vec1 - trace_endpos) > maxFloorDistance || trace_ent)
+                {
+                    vec1_x = placement_x;
+                    vec1_y = placement_y;
+                    vec1_z = placement_z + monsterMins_z;
+
+                    vec2 = vec1;
+                    vec2_z -= 99999;
+
+                    traceline(vec1,vec2,FALSE,self);
+                    if(vlen(vec1 - trace_endpos) > maxFloorDistance || trace_ent)
+                        return FALSE;
+                }
+            }
+        }
+    }
+
+    
+    return TRUE;
+    */
+}
+
+
+float(vector placement,vector monsterMins,vector monsterMaxs,float monsterType) NightmarePlus_TestPlacementOld =
 {
     local vector corners[8];
     local vector corner;
@@ -109,13 +201,17 @@ float(vector placement,vector monsterMins,vector monsterMaxs) NightmarePlus_Test
     corner_x = placement_x + monsterMaxs_x;
     corners[7] = corner;
 
-    // Check corners
+    // Check if all corners are free
     local float i;
     for(i=0;i<8;i++) {
         local float contents = pointcontents(corners[i]);
 
+        if(monsterType == MT_AQUACTIC && contents != CONTENT_WATER)
+            return FALSE;
+        
         if(contents != CONTENT_EMPTY && contents != CONTENT_WATER)
             return FALSE;
+
     }
 
 
@@ -156,6 +252,12 @@ float(vector placement,vector monsterMins,vector monsterMaxs) NightmarePlus_Test
     if(!NightmarePlus_TestEdge(vec1,vec2))
         return FALSE;
     
+
+    // Check if there's a floor underneath
+    if(monsterType == MT_WALKER && !NightmarePlus_IsThereFloorUnderneath(placement,monsterMins,monsterMaxs))
+        return FALSE;
+
+
     // Final ent check
     local float maxSize = math_max(fabs(monsterMins_x) + fabs(monsterMaxs_x),fabs(monsterMins_y) + fabs(monsterMaxs_y));
     maxSize = math_max(maxSize,fabs(monsterMins_z) + fabs(monsterMaxs_z));
@@ -178,7 +280,41 @@ float(vector placement,vector monsterMins,vector monsterMaxs) NightmarePlus_Test
     return TRUE;
 }
 
-void(entity monster,void() creation) NightmarePlus_CreateEnemy =
+float(vector placement,vector monsterMins,vector monsterMaxs,float monsterType) NightmarePlus_TestPlacement = 
+{
+    if(monsterType == MT_AQUACTIC)
+    {
+        return NightmarePlus_TestPlacementOld(placement,monsterMins,monsterMaxs,monsterType);
+    }
+
+    local entity tester = spawn();
+
+    local entity oself = self;
+    self = tester;
+
+    self.mins = monsterMins;
+    self.maxs = monsterMaxs;
+    self.origin = placement + '0 0 1';
+
+    self.flags |= FL_MONSTER;
+
+    if(monsterType == MT_FLYER)
+        self.flags |= FL_FLY;
+
+    local float result = FALSE;
+    if((monsterType != MT_WALKER || droptofloor()) && walkmove(0,0))
+    {
+        result = vlen(placement - self.origin) <= 24;
+    }
+    
+    self = oself;
+
+    remove(tester);
+
+    return result;
+}
+
+void(entity monster,void() creation,float monsterType) NightmarePlus_CreateEnemy =
 {
     local vector placement;
     local entity oself;
@@ -192,20 +328,30 @@ void(entity monster,void() creation) NightmarePlus_CreateEnemy =
         dprint(" -> ");
     }
 
-    local float tries = 256;
+    local float tries = monsterType == MT_AQUACTIC ? 128 : 1024;
     do 
     {
         placement = monster.origin;
-        placement_x += randomRange(-128,128);
-        placement_y += randomRange(-128,128);
+
+        if(gamemode & GM_DISPERSE) {
+            placement_x += randomRange(-512,512);
+            placement_y += randomRange(-512,512);
+            placement_z += randomRange(0,24);
+        }
+        else {
+            placement_x += randomRange(-128,128);
+            placement_y += randomRange(-128,128);
+            placement_z += randomRange(0,24);
+        }
 
         traceline(monster.origin,placement,FALSE,monster);
 
-        if(trace_fraction == 1.0 && !trace_ent && NightmarePlus_TestPlacement(placement,monster.mins,monster.maxs)) {				
+        if(trace_fraction == 1.0 && !trace_ent && NightmarePlus_TestPlacement(placement,monster.mins,monster.maxs,monsterType)) {				
             local entity ent = spawn();
             ent.classname = monster.classname;
             ent.origin = placement;
             ent.impulse = 1;
+            ent.angles = monster.angles;
 
             oself = self;
             self = ent;
@@ -262,31 +408,31 @@ void() NightmarePlus_GenerateEnemies =
             
 
         if (p.classname == "monster_army")
-            NightmarePlus_CreateEnemy(p,monster_army);
+            NightmarePlus_CreateEnemy(p,monster_army,MT_WALKER);
         else if (p.classname == "monster_demon1")
-            NightmarePlus_CreateEnemy(p,monster_demon1);
+            NightmarePlus_CreateEnemy(p,monster_demon1,MT_WALKER);
         else if (p.classname == "monster_dog")
-            NightmarePlus_CreateEnemy(p,monster_dog);
+            NightmarePlus_CreateEnemy(p,monster_dog,MT_WALKER);
         else if (p.classname == "monster_enforcer")
-            NightmarePlus_CreateEnemy(p,monster_enforcer);
+            NightmarePlus_CreateEnemy(p,monster_enforcer,MT_WALKER);
         else if (p.classname == "monster_fish")
-            NightmarePlus_CreateEnemy(p,monster_fish);
+            NightmarePlus_CreateEnemy(p,monster_fish,MT_AQUACTIC);
         else if (p.classname == "monster_hell_knight")
-            NightmarePlus_CreateEnemy(p,monster_hell_knight);
+            NightmarePlus_CreateEnemy(p,monster_hell_knight,MT_WALKER);
         else if (p.classname == "monster_knight")
-            NightmarePlus_CreateEnemy(p,monster_knight);
+            NightmarePlus_CreateEnemy(p,monster_knight,MT_WALKER);
         else if (p.classname == "monster_ogre")
-            NightmarePlus_CreateEnemy(p,monster_ogre);
+            NightmarePlus_CreateEnemy(p,monster_ogre,MT_WALKER);
         else if (p.classname == "monster_shalrath")
-            NightmarePlus_CreateEnemy(p,monster_shalrath);
+            NightmarePlus_CreateEnemy(p,monster_shalrath,MT_WALKER);
         else if (p.classname == "monster_shambler")
-            NightmarePlus_CreateEnemy(p,monster_shambler);
+            NightmarePlus_CreateEnemy(p,monster_shambler,MT_WALKER);
         else if (p.classname == "monster_tarbaby")
-            NightmarePlus_CreateEnemy(p,monster_tarbaby);
+            NightmarePlus_CreateEnemy(p,monster_tarbaby,MT_WALKER);
         else if (p.classname == "monster_wizard")
-            NightmarePlus_CreateEnemy(p,monster_wizard);
+            NightmarePlus_CreateEnemy(p,monster_wizard,MT_FLYER);
         else if (p.classname == "monster_zombie" && !(p.spawnflags & SPAWN_CRUCIFIED))
-            NightmarePlus_CreateEnemy(p,monster_zombie);
+            NightmarePlus_CreateEnemy(p,monster_zombie,MT_WALKER);
 
 
         // Advance the iterator
@@ -302,31 +448,31 @@ void() nightmareplus_spawner_think =
     local entity monster = self.trigger_field;
 
     if (monster.classname == "monster_army")
-        NightmarePlus_CreateEnemy(monster,monster_army);
+        NightmarePlus_CreateEnemy(monster,monster_army,MT_WALKER);
     else if (monster.classname == "monster_demon1")
-        NightmarePlus_CreateEnemy(monster,monster_demon1);
+        NightmarePlus_CreateEnemy(monster,monster_demon1,MT_WALKER);
     else if (monster.classname == "monster_dog")
-        NightmarePlus_CreateEnemy(monster,monster_dog);
+        NightmarePlus_CreateEnemy(monster,monster_dog,MT_WALKER);
     else if (monster.classname == "monster_enforcer")
-        NightmarePlus_CreateEnemy(monster,monster_enforcer);
+        NightmarePlus_CreateEnemy(monster,monster_enforcer,MT_WALKER);
     else if (monster.classname == "monster_fish")
-        NightmarePlus_CreateEnemy(monster,monster_fish);
+        NightmarePlus_CreateEnemy(monster,monster_fish,MT_AQUACTIC);
     else if (monster.classname == "monster_hell_knight")
-        NightmarePlus_CreateEnemy(monster,monster_hell_knight);
+        NightmarePlus_CreateEnemy(monster,monster_hell_knight,MT_WALKER);
     else if (monster.classname == "monster_knight")
-        NightmarePlus_CreateEnemy(monster,monster_knight);
+        NightmarePlus_CreateEnemy(monster,monster_knight,MT_WALKER);
     else if (monster.classname == "monster_ogre")
-        NightmarePlus_CreateEnemy(monster,monster_ogre);
+        NightmarePlus_CreateEnemy(monster,monster_ogre,MT_WALKER);
     else if (monster.classname == "monster_shalrath")
-        NightmarePlus_CreateEnemy(monster,monster_shalrath);
+        NightmarePlus_CreateEnemy(monster,monster_shalrath,MT_WALKER);
     else if (monster.classname == "monster_shambler")
-        NightmarePlus_CreateEnemy(monster,monster_shambler);
+        NightmarePlus_CreateEnemy(monster,monster_shambler,MT_WALKER);
     else if (monster.classname == "monster_tarbaby")
-        NightmarePlus_CreateEnemy(monster,monster_tarbaby);
+        NightmarePlus_CreateEnemy(monster,monster_tarbaby,MT_WALKER);
     else if (monster.classname == "monster_wizard")
-        NightmarePlus_CreateEnemy(monster,monster_wizard);
+        NightmarePlus_CreateEnemy(monster,monster_wizard,MT_FLYER);
     else if (monster.classname == "monster_zombie")
-        NightmarePlus_CreateEnemy(monster,monster_zombie);
+        NightmarePlus_CreateEnemy(monster,monster_zombie,MT_WALKER);
 
     remove(self);
 }
@@ -337,7 +483,7 @@ void() nightmareplus_spawner =
         objerror("self.trigger_field not set.");
 
     self.think = nightmareplus_spawner_think;
-    self.nextthink = time;
+    self.nextthink = time + 0.2;
 }
 
 
@@ -346,6 +492,7 @@ void() NightmarePlus_CreateSpawnerIfNeeded =
     if(gamemode & GM_NO_EXTRA_MONSTERS)
         return;
 
+    // Is it an extra monster already?
     if(self.impulse == 1)
         return;
 
@@ -354,6 +501,8 @@ void() NightmarePlus_CreateSpawnerIfNeeded =
 
     if(gamemode & GM_TRIPLE_MONSTERS)
         total = 2;
+    if(gamemode & GM_MADNESS_AMOUNT_MONSTERS)
+        total = 8;
 
     local float i;
     for(i=0;i<total;i++) {
@@ -361,6 +510,7 @@ void() NightmarePlus_CreateSpawnerIfNeeded =
         ent.classname = "nightmareplus_spawner";
         ent.trigger_field = self;
         ent.origin = self.origin;
+        ent.angles = self.angles;
 
         local entity oself = self;
         self = ent;

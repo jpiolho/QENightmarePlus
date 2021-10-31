@@ -44,6 +44,7 @@ void() PlaceItem =
 	self.velocity = '0 0 0';
 	self.origin_z = self.origin_z + 6;
 	oldz = self.origin_z;
+	
 	if (!droptofloor())
 	{
 		dprint ("Bonus item fell out of level at ");
@@ -63,7 +64,7 @@ Sets the clipping size and plants the object on the floor
 */
 void() StartItem =
 {
-	self.nextthink = time + 0.2;	// items start after other solids
+	self.nextthink = time;	// items start after other solids
 	self.think = PlaceItem;
 };
 
@@ -193,7 +194,7 @@ void() health_touch =
 	{
 		if (deathmatch)
 			self.nextthink = time + 20;
-		else if (coop)
+		else if (coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
 			self.nextthink = time + 60;
 		self.think = SUB_regen;
 	}
@@ -221,7 +222,7 @@ void() item_megahealth_rot =
 	{
 		self.nextthink = time + 20;
 	}
-	else if(coop)
+	else if(coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
 	{
 		self.nextthink = time + 60;
 	}
@@ -276,7 +277,7 @@ void() armor_touch =
 	self.model = string_null;
 	if (deathmatch)
 		self.nextthink = time + 20;
-	else if(coop)
+	else if(coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
 		self.nextthink = time + 60;
 	self.think = SUB_regen;
 
@@ -510,7 +511,7 @@ void() weapon_touch =
 	self.solid = SOLID_NOT;
 	if (deathmatch)
 		self.nextthink = time + 30;
-	else if(coop)
+	else if(coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
 		self.nextthink = time + 60;
 	self.think = SUB_regen;
 	
@@ -693,7 +694,7 @@ local float		best;
 	self.solid = SOLID_NOT;
 	if (deathmatch)
 		self.nextthink = time + 30;
-	else if(coop)
+	else if(coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
 		self.nextthink = time + 60;
 	self.think = SUB_regen;
 
