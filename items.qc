@@ -194,8 +194,9 @@ void() health_touch =
 	{
 		if (deathmatch)
 			self.nextthink = time + 20;
-		else if (coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
+		else if(NightmarePlus_ShouldRespawnItem())
 			self.nextthink = time + 60;
+		
 		self.think = SUB_regen;
 	}
 	
@@ -222,7 +223,7 @@ void() item_megahealth_rot =
 	{
 		self.nextthink = time + 20;
 	}
-	else if(coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
+	else if(NightmarePlus_ShouldRespawnItem())
 	{
 		self.nextthink = time + 60;
 	}
@@ -277,7 +278,7 @@ void() armor_touch =
 	self.model = string_null;
 	if (deathmatch)
 		self.nextthink = time + 20;
-	else if(coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
+	else if(NightmarePlus_ShouldRespawnItem())
 		self.nextthink = time + 60;
 	self.think = SUB_regen;
 
@@ -511,7 +512,7 @@ void() weapon_touch =
 	self.solid = SOLID_NOT;
 	if (deathmatch)
 		self.nextthink = time + 30;
-	else if(coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
+	else if(NightmarePlus_ShouldRespawnItem())
 		self.nextthink = time + 60;
 	self.think = SUB_regen;
 	
@@ -694,7 +695,7 @@ local float		best;
 	self.solid = SOLID_NOT;
 	if (deathmatch)
 		self.nextthink = time + 30;
-	else if(coop || gamemode & GM_RESPAWN_ITEMS_IN_SINGLEPLAYER)
+	else if(NightmarePlus_ShouldRespawnItem())
 		self.nextthink = time + 60;
 	self.think = SUB_regen;
 

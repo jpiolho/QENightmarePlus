@@ -206,10 +206,12 @@ float(vector placement,vector monsterMins,vector monsterMaxs,float monsterType) 
     for(i=0;i<8;i++) {
         local float contents = pointcontents(corners[i]);
 
-        if(monsterType == MT_AQUACTIC && contents != CONTENT_WATER)
-            return FALSE;
-        
-        if(contents != CONTENT_EMPTY && contents != CONTENT_WATER)
+        if(monsterType == MT_AQUACTIC)
+        {
+            if(contents != CONTENT_WATER)
+                return FALSE;
+        }
+        else if(contents != CONTENT_EMPTY && contents != CONTENT_WATER)
             return FALSE;
 
     }
@@ -522,10 +524,17 @@ void() NightmarePlus_CreateSpawnerIfNeeded =
 void() NightmarePlus_LoadGamemode =
 {
     monsters_health_modifier = gamemode & GM_NORMAL_MONSTER_HEALTH ? 1 : 2;
-    items_ammo_modifier = gamemode & GM_NORMAL_AMMO_AMOUNT ? 1 : 1.50;
+    items_ammo_modifier = gamemode & GM_NORMAL_AMMO_AMOUNT ? 1 : 1.5;
 }
 
 float(float amount) NightmarePlus_GetAmmoAmount =
 {
     return rint(amount * items_ammo_modifier);
+}
+
+
+float() NightmarePlus_ShouldRespawnItem =
+{
+    return (coop && !(gamemode & GM_DONT_RESPAWN_ITEMS))
+    || (gamemode & GM_RESPAWN_ITEMS);
 }

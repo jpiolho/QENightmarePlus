@@ -182,9 +182,10 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	self = targ;
 
 	if ( (self.flags & FL_MONSTER) && attacker != world)
-	{
+	{		
 	// get mad unless of the same class (except for soldiers)
-		if (self != attacker && attacker != self.enemy)
+		if (self != attacker && attacker != self.enemy
+		&& (gamemode & GM_NO_INFIGHTING && attacker.classname == "player"))
 		{
 			if ( (self.classname != attacker.classname) 
 			|| (self.classname == "monster_army" ) )
