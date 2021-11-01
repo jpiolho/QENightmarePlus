@@ -14,6 +14,10 @@ By default here's what's going to happen:
 * When changing map, you'll be given a minimum amount of ammo for all types of ammo (shells, nails, rockets, cells).
 * Cooperative: Whenever a player respawns, it will be given any weapons that have been picked up in the map or carried over from previous map. Keys that have been picked up in the current level will also be given.
 
+## Known issues
+
+* Monsters inside water will not spawn extras.
+
 ## How to install for singleplayer
 1. Go to your 'Saved games' quake folder, or your steam quake/rerelease folder. You can get to your saved games folder by pressing Windows+R and typing: %userprofile%\Saved Games\Nightdive Studios\Quake
 2. Create a folder called "qenightmareplus"
