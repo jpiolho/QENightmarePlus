@@ -946,7 +946,7 @@ void() PlayerPreThink =
 		return;		// intermission or finale
 
 	if(self.cnt == 0) {
-		centerprint(self,"Welcome to Nightmare+\nHarder than nightmare!\n\nAny bugs are probably related to the mod\n\nHave fun!");
+		centerprint(self,"Welcome to Nightmare+\nHarder than nightmare!\n\nAny bugs are probably related to the mod\n\nGamemode: ",ftos(gamemode),"\nHave fun!");
 
 		// Mark as message sent
 		self.cnt = 1;
