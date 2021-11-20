@@ -29,6 +29,16 @@ void() info_intermission =
 };
 
 
+float() GetMaxHealth =
+{
+	if(!deathmatch && skill == SKILL_NIGHTMARE && gamemode & GM_NIGHTMARE_50_HEALTH) {
+		return 50;
+	}
+	else {
+		return 100;
+	}
+}
+
 
 void() SetChangeParms =
 {
@@ -45,8 +55,11 @@ void() SetChangeParms =
 // cap super health
 	if (self.health > self.max_health)
 		self.health = self.max_health;
-	if (self.health < 50)
-		self.health = 50;
+
+	local float halfMaxHealth = self.max_health / 2;
+	if (self.health < halfMaxHealth)
+		self.health = halfMaxHealth;
+		
 	parm1 = self.items;
 	parm2 = self.health;
 	parm3 = self.armorvalue;
@@ -65,7 +78,7 @@ void() SetChangeParms =
 void() SetNewParms =
 {
 	parm1 = IT_SHOTGUN | IT_AXE;
-	parm2 = (skill == SKILL_NIGHTMARE && gamemode & GM_NIGHTMARE_50_HEALTH) ? 50 : 100;
+	parm2 = GetMaxHealth();
 	parm3 = 0;
 	parm4 = NightmarePlus_GetAmmoAmount(25);
 	parm5 = 0;
@@ -156,6 +169,7 @@ entity() FindIntermission =
 		return spot;
 	
 	objerror ("FindIntermission: no spot");
+	return world;
 };
 
 
@@ -314,7 +328,6 @@ void() execute_changelevel =
 
 void() changelevel_touch =
 {
-	local entity	pos;
 
 	if (other.classname != "player")
 		return;
@@ -508,12 +521,12 @@ void() PutClientInServer =
 	spot = SelectSpawnPoint ();
 
 	self.classname = "player";
-	self.health = 100;
+	self.health = GetMaxHealth();
 	self.takedamage = DAMAGE_AIM;
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_WALK;
 	self.show_hostile = 0;
-	self.max_health = 100;
+	self.max_health = self.health;
 	self.flags = FL_CLIENT;
 	self.air_finished = time + 12;
 	self.dmg = 2;   		// initial water damage
@@ -726,7 +739,6 @@ void() CheckRules =
 
 void() PlayerDeathThink =
 {
-	local entity	old_self;
 	local float		forward;
 
 	if ((self.flags & FL_ONGROUND))
@@ -761,7 +773,6 @@ void() PlayerDeathThink =
 
 void() PlayerJump =
 {
-	local vector start, end;
 	
 	if (self.flags & FL_WATERJUMP)
 		return;
@@ -933,8 +944,6 @@ Called every frame before physics are run
 */
 void() PlayerPreThink =
 {
-	local	float	mspeed, aspeed;
-	local	float	r;
 
 	if (intermission_running)
 	{
@@ -1152,8 +1161,6 @@ Called every frame after physics are run
 */
 void() PlayerPostThink =
 {
-	local	float	mspeed, aspeed;
-	local	float	r;
 
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale

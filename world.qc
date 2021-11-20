@@ -5,6 +5,8 @@ void() InitBodyQue;
 
 void() main =
 {
+	local float ignore = empty_float; // To absorb unused empty_float warning
+
 	dprint ("main function\n");
 	
 // these are just commands the the prog compiler to copy these files
@@ -378,7 +380,6 @@ void() bodyque =
 
 void() InitBodyQue =
 {
-	local entity	e;
 	
 	bodyque_head = spawn();
 	bodyque_head.classname = "bodyque";
