@@ -51,7 +51,7 @@ void() Debug_DrawBounds =
     vec2_y = center_y;
     vec2_z = center_z;
 
-    draw_line(vec1,vec2,!NightmarePlus_TestEdge(vec1,vec2) ? 251 : 63,FALSE);
+    draw_line(vec1,vec2,!NightmarePlus_TestEdge(vec1,vec2) ? 251 : 63,FALSE, FALSE);
     
     vec1_x = center_x;
     vec1_y = center_y + bmax_y;
@@ -61,7 +61,7 @@ void() Debug_DrawBounds =
     vec2_y = center_y + bmin_y;
     vec2_z = center_z;
     
-    draw_line(vec1,vec2,!NightmarePlus_TestEdge(vec1,vec2) ? 251 : 63,FALSE);
+    draw_line(vec1,vec2,!NightmarePlus_TestEdge(vec1,vec2) ? 251 : 63,FALSE, FALSE);
     
     vec1_x = center_x;
     vec1_y = center_y;
@@ -71,7 +71,7 @@ void() Debug_DrawBounds =
     vec2_y = center_y;
     vec2_z = center_z + bmin_z;
     
-    draw_line(vec1,vec2,!NightmarePlus_TestEdge(vec1,vec2) ? 251 : 63,FALSE);
+    draw_line(vec1,vec2,!NightmarePlus_TestEdge(vec1,vec2) ? 251 : 63,FALSE, FALSE);
 
     /*
     local float radius = 3;
@@ -271,7 +271,13 @@ float(vector placement,vector monsterMins,vector monsterMaxs,float monsterType) 
             local vector entMins = ent.origin + ent.mins;
             local vector entMaxs = ent.origin + ent.maxs;
 
-            if(corners[i] >= entMins && corners[i] <= entMaxs)
+            local vector c = corners[i];
+            if(c_x >= entMins_x && 
+               c_y >= entMins_y &&
+               c_z >= entMins_z &&
+               c_x <= entMaxs_x &&
+               c_y <= entMaxs_y &&
+               c_z <= entMaxs_z)
                 return FALSE;
         }
 
@@ -381,15 +387,13 @@ entity nightmarePlus_currentEntity;
 
 void() NightmarePlus_GenerateEnemies =
 {
-    local entity lastEnt;
 	local entity p;
-	local entity ent;
 	local float entitiesThisFrame = 0;
 
     if(!nightmarePlus_lastEntity) {
         // First, find the last entity
         p = world;
-        while(p = nextent(p))
+        while((p = nextent(p)))
             nightmarePlus_lastEntity = p;
 
         nightmarePlus_currentEntity = world;
@@ -398,7 +402,7 @@ void() NightmarePlus_GenerateEnemies =
 
 	// Now loop through all entities, and end at the last entity
 	p = nightmarePlus_currentEntity;
-	while(p != nightmarePlus_lastEntity && p = nextent(p))
+	while((p != nightmarePlus_lastEntity && p = nextent(p)))
 	{
         entitiesThisFrame++;
 
